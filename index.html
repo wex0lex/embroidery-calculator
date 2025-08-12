@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Вышивка">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <meta name="theme-color" content="#4CAF50">
+    <title>Калькулятор вышивки</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .calculation-form {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+        }
+        select {
+            padding: 5px;
+            min-width: 200px;
+        }
+        .checkbox-group label {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #price-result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор вышивки</h1>
+    
+    <div class="type_selection">
+        <label>Выберите тип изделия:</label>
+        <select class="nopayment-select">
+            <option value="">Выберите тип изделия</option>
+            <option value="1">Вышивка на готовых изделиях</option>
+            <option value="2">Бейсболки</option>
+            <option value="3">Крой</option>
+            <option value="4">Нашивки, шевроны</option>
+            <option value="5">Ремувки</option>
+            <option value="6">Носки</option>
+            <option value="7">Именная вышивка</option>
+            <option value="8">Манжеты</option>
+            <option value="9">Значки</option>
+        </select>
+    </div>
+
+    <div id="calculation"></div>
+
+    <script src="emulator.js"></script>
+    <script>
+        // Ждем загрузку DOM и скрипта калькулятора
+        document.addEventListener('DOMContentLoaded', function() {
+            // Создаем экземпляр калькулятора
+            window.calculator = new EmbroideryCalculator();
+            
+            // Добавляем обработчик события change для select
+            const select = document.querySelector('.nopayment-select');
+            select.addEventListener('change', function() {
+                const itemType = parseInt(this.value);
+                const calculationDiv = document.getElementById('calculation');
+                
+                if (itemType) {
+                    calculationDiv.innerHTML = calculator.generateCalculationForm(itemType);
+                } else {
+                    calculationDiv.innerHTML = '';
+                }
+            });
+        });
+    </script>
+    <script>
+        // Регистрация service worker для PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // Обработка установки PWA на iOS
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        // Добавляем мета-тег для полноэкранного режима на iOS
+        if (navigator.standalone) {
+            document.documentElement.style.height = '100vh';
+        }
+    </script>
+</body>
+</html>
